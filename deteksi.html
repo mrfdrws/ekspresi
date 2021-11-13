@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="x-ua-compatible" content="ie=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <title>Real-Time Deteksi Ekspresi Online</title>
+        <link rel="canonical" href="https://example.com/" />
+        <link rel="icon" href="/favicon-32x32.png" type="image/png" />
+        <meta name="theme-color" content="#0d2050" />
+        <link rel="apple-touch-icon" sizes="48x48" href="/icons/icon-48x48.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png" />
+        <link rel="apple-touch-icon" sizes="96x96" href="/icons/icon-96x96.png" />
+        <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png" />
+        <link rel="apple-touch-icon" sizes="256x256" href="/icons/icon-256x256.png" />
+        <link rel="apple-touch-icon" sizes="384x384" href="/icons/icon-384x384.png" />
+        <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png" />
+        <link rel="stylesheet" href="/style.css" />
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.5.2"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-data"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface@0.0.7/dist/blazeface.min.js"></script>
+    </head>
+    <body>
+        <div>
+            <header class="Header">
+                <div class="Container">
+                    <div class="HeaderContainer">
+                        <a aria-current="page" class="HeaderLogo" href="/">
+                            <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon">
+                                <path d="M15.095 12.232A3.085 3.085 0 0112 15.308a3.085 3.085 0 01-3.095-3.076A3.085 3.085 0 0112 9.157a3.085 3.085 0 013.095 3.075z" fill="currentColor"></path>
+                                <path
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M12 3.552c-4.653 0-8.426 3.749-8.426 8.373a8.345 8.345 0 003.576 6.848c.807.565 1 1.673.43 2.474a1.794 1.794 0 01-2.49.428C2.015 19.52 0 15.956 0 11.925 0 5.339 5.373 0 12 0s12 5.339 12 11.925c0 4.031-2.015 7.595-5.09 9.75a1.794 1.794 0 01-2.49-.428 1.769 1.769 0 01.43-2.474 8.345 8.345 0 003.575-6.848c0-4.624-3.772-8.373-8.425-8.373z"
+                                    fill="currentColor"
+                                ></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </header>
+            <div class="Body">
+                <div class="Container">
+                    <div class="CamContainer">
+                        <div class="StreamConsumer">
+                            <div class="content">
+                                <div class="VideoContainer">
+                                    <style>
+                                        .webcam-view {
+                                            position: relative;
+                                        }
+                                        canvas {
+                                            position: absolute;
+                                            top: 0;
+                                            left: 0;
+                                            max-width: 100%;
+                                        }
+                                        .video-view{
+                                            background: #f4f6fa;
+                                            border-radius: 5px;
+                                            display: block;
+                                            width: 100%;
+                                        }
+                                    </style>
+                                    <div class="webcam-view">
+                                        <video class="video-view" id="video" width="640" height="480" playsinline style="-webkit-transform: scaleX(-1); transform: scaleX(-1); max-width: 100%; height: auto;"></video>
+                                        <canvas id="output"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="TestToolContainer">
+                                <div class="TestTool">
+                                    <div class="Recorder"><button id="detection" class="RoundedButton -md -primary">Start Detection</button></div>
+                                    <h3 class="TestToolTitle">Expression</h3>
+                                    <!-- <p id="loading-model">Loading magics...</p> -->
+                                    <div class="Effects">
+                                        <ul class="list">
+                                            <li class="EffectSelect"><label class="label">Angry</label><input class="range" type="range" min="0" max="100" id="angry" value="0" /></li>
+                                            <li class="EffectSelect"><label class="label">Disgust</label><input class="range" type="range" min="0" max="100" id="disgust" value="0" /></li>
+                                            <li class="EffectSelect"><label class="label">Fear</label><input class="range" type="range" min="0" max="100" id="fear" value="0" /></li>
+                                            <li class="EffectSelect"><label class="label">Happy</label><input class="range" type="range" min="0" max="100" id="happy" value="0" /></li>
+                                            <li class="EffectSelect"><label class="label">Sad</label><input class="range" type="range" min="0" max="100" id="sad" value="0" /></li>
+                                            <li class="EffectSelect"><label class="label">Surprise</label><input class="range" type="range" min="0" max="100" id="surprise" value="0" /></li>
+                                            <li class="EffectSelect"><label class="label">Neutral</label><input class="range" type="range" min="0" max="100" id="neutral" value="0" /></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="index.js"></script>
+    </body>
+</html>

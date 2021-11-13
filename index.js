@@ -25,6 +25,15 @@ async function setupCanvas() {
   canvasCtx.fillStyle = "rgba(255, 0, 0, 0.5)";
 }
 
+async function removeCanvas() {
+  try {
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+     console.log('canvasCtx remove');
+  } catch (err) {
+    console.log('canvasCtx cannot remove');
+  }
+}
+
 let faceDetectionModel;
 async function loadFaceDetectionModel() {
   console.log("loading face detection model");
@@ -34,12 +43,12 @@ async function loadFaceDetectionModel() {
   });
 }
 
-let maskDetectionModel;
-async function loadMaskDetectionModel() {
-  console.log("loading mask detection model");
+let ExpressionDetectionModel;
+async function loadExpressionDetectionModel() {
+  console.log("loading expression detection model");
   await tf.loadLayersModel('./models/tfjs/model.json').then(m => {
-    maskDetectionModel = m;
-    console.log("mask detection model loaded");
+    ExpressionDetectionModel = m;
+    console.log("Expression detection model loaded");
   });
 }
 
@@ -64,9 +73,8 @@ async function renderPrediction() {
     console.error("estimateFaces:", e);
     return;
   }
-
   if (faces.length > 0) {
-    // TODO: Loop through all predicted faces and detect if mask used or not.
+    // TODO: Loop through all predicted faces and detect if Expression used or not.
     // RIght now, it only highlights the fisrt face into the live view. (See the break command below)
     for (let i = 0; i < faces.length; i++) {
       let predictions = [];
@@ -75,9 +83,9 @@ async function renderPrediction() {
         .toFloat().sub(offset).div(offset).expandDims(0));
 
       try {
-        predictions = await maskDetectionModel.predict(face).data();
+        predictions = await ExpressionDetectionModel.predict(face).data();
       } catch (e){
-        console.error("maskDetection:", e);
+        console.error("ExpressionDetection:", e);
         return;
       }
 
@@ -90,14 +98,22 @@ async function renderPrediction() {
       canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
 
       let faceBoxStyle = "rgba(255, 0, 0, 0.25)";
-      let label = "Tidak Terprediksi";
+      let label = "Loading..";
       let labels = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
       if (predictions.length > 0) {
+        document.getElementById('angry').value = predictions[0] * 100;
+        document.getElementById('disgust').value = predictions[1] * 100;
+        document.getElementById('fear').value = predictions[2] * 100;
+        document.getElementById('happy').value = predictions[3] * 100;
+        document.getElementById('sad').value = predictions[4] * 100;
+        document.getElementById('surprise').value = predictions[5] * 100;
+        document.getElementById('neutral').value = predictions[6] * 100;
+        // console.log(predictions[0]);
         var indexOfMaxValue = predictions.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
         label = indexOfMaxValue;
         for( let a = 0; a < labels.length; a++){
           if(indexOfMaxValue == a){
-            label = labels[a]
+            label = labels[a];
           }
         }
 
@@ -119,13 +135,10 @@ async function renderPrediction() {
 
   img.dispose();
   requestAnimationFrame(renderPrediction);
-
-  if (loadingModel.innerHTML !== "") {
-    loadingModel.innerHTML = "";
-  }
 }
 
-async function main() {
+
+async function showStreaming() {
   await setupCamera();
   video.play();
 
@@ -134,12 +147,58 @@ async function main() {
   video.width = videoWidth;
   video.height = videoHeight;
 
-  setupCanvas();
-
-  await loadFaceDetectionModel();
-  await loadMaskDetectionModel();
-
-  renderPrediction();
 }
 
-main();
+async function detectionExpression() {
+    video.play();
+    setupCanvas();
+
+    await loadFaceDetectionModel();
+    await loadExpressionDetectionModel();
+
+    renderPrediction();
+    console.log("the function process is running...");
+
+}
+
+async function stopStreaming() {
+  video = document.getElementById('video');
+
+  const stream = await navigator.mediaDevices.getUserMedia({
+    'audio': false,
+    'video': { facingMode: 'user' },
+  });
+  video.srcObject = stream;
+
+  return new Promise((resolve) => {
+    video.onloadedmetadata = () => {
+      resolve(video);
+    };
+  });
+  video.getTracks().forEach(function(track) {
+    track.stop();
+  });
+}
+
+showStreaming();
+
+const btn = document.querySelector("button");
+const cnv = document.querySelector("canvas");
+
+btn.addEventListener("click", doDetection);
+async function doDetection() {
+  if (btn.textContent === "Start Detection") {
+    detectionExpression();
+    console.log("the function process is running...");
+    btn.textContent = "Stop Detection";
+    btn.setAttribute('style', 'background: green');
+    cnv.removeAttribute('style', 'display: none');
+  } else {
+    stopStreaming();
+    // renderPrediction(null);
+    btn.textContent = "Start Detection";
+    btn.removeAttribute('style', 'background: green');
+    cnv.setAttribute('style', 'display: none');
+    showStreaming();
+  }
+}
