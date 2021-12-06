@@ -1,4 +1,5 @@
 
+//function setup camera/akses kamera
 let video, videoWidth, videoHeight;
 async function setupCamera() {
   video = document.getElementById('video');
@@ -16,6 +17,7 @@ async function setupCamera() {
   });
 }
 
+//function setup canvas
 let canvas, canvasCtx;
 async function setupCanvas() {
   canvas = document.getElementById('output');
@@ -25,6 +27,7 @@ async function setupCanvas() {
   canvasCtx.fillStyle = "rgba(255, 0, 0, 0.5)";
 }
 
+//function remove canvas
 async function removeCanvas() {
   try {
     canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
@@ -34,6 +37,7 @@ async function removeCanvas() {
   }
 }
 
+//function deteksi wajah (face detection)
 let faceDetectionModel;
 async function loadFaceDetectionModel() {
   console.log("loading face detection model");
@@ -43,23 +47,23 @@ async function loadFaceDetectionModel() {
   });
 }
 
+//function load model
 let ExpressionDetectionModel;
+let datasetpathex;
+
 async function loadExpressionDetectionModel() {
   console.log("loading expression detection model");
-  await tf.loadLayersModel('./models/tfjs/model.json').then(m => {
+  await tf.loadLayersModel(datasetpathex).then(m => {
     ExpressionDetectionModel = m;
-    console.log("Expression detection model loaded");
+    console.log("expression detection model loaded");
   });
 }
 
+//function prediksi
 const returnTensors = false;
 const flipHorizontal = true;
 const annotateBoxes = false;
 const offset = tf.scalar(127.5);
-
-const decisionThreshold = 0.9;
-
-const loadingModel = document.getElementById('loading-model');
 
 async function renderPrediction() {
   // Get image from webcame
@@ -74,8 +78,6 @@ async function renderPrediction() {
     return;
   }
   if (faces.length > 0) {
-    // TODO: Loop through all predicted faces and detect if Expression used or not.
-    // RIght now, it only highlights the fisrt face into the live view. (See the break command below)
     for (let i = 0; i < faces.length; i++) {
       let predictions = [];
 
@@ -97,6 +99,7 @@ async function renderPrediction() {
 
       canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // let faceBoxStyle = "rgba(0, 255, 0, 0.25)";
       let faceBoxStyle = "rgba(255, 0, 0, 0.25)";
       let label = "Loading..";
       let labels = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
@@ -128,7 +131,6 @@ async function renderPrediction() {
       canvasCtx.fillStyle = faceBoxStyle;
       canvasCtx.fillRect(start[0], start[1], size[0], size[1]);
 
-      // TODO: Loop through all detected faces instead of the first one.
       break;
     }
   }
@@ -137,7 +139,7 @@ async function renderPrediction() {
   requestAnimationFrame(renderPrediction);
 }
 
-
+//start streaming video
 async function showStreaming() {
   await setupCamera();
   video.play();
@@ -146,21 +148,9 @@ async function showStreaming() {
   videoHeight = video.videoHeight;
   video.width = videoWidth;
   video.height = videoHeight;
-
 }
 
-async function detectionExpression() {
-    video.play();
-    setupCanvas();
-
-    await loadFaceDetectionModel();
-    await loadExpressionDetectionModel();
-
-    renderPrediction();
-    console.log("the function process is running...");
-
-}
-
+//stop streaming video
 async function stopStreaming() {
   video = document.getElementById('video');
 
@@ -180,22 +170,42 @@ async function stopStreaming() {
   });
 }
 
+//deteksi ekspresi
+async function detectionExpression() {
+
+}
+
+//action
+
 showStreaming();
 
+//button click condition
 const btn = document.querySelector("button");
 const cnv = document.querySelector("canvas");
+const effect = document.getElementById('effect');
 
 btn.addEventListener("click", doDetection);
 async function doDetection() {
   if (btn.textContent === "Start Detection") {
-    detectionExpression();
-    console.log("the function process is running...");
+    var sel = document.getElementById('scripts');
+    var jenismodel = sel.options[sel.selectedIndex].value;
+    datasetpathex = jenismodel;
+    console.log(datasetpathex);
+    video.play();
+    setupCanvas();
+
+    await loadFaceDetectionModel();
+    await loadExpressionDetectionModel();
+
+    renderPrediction();
     btn.textContent = "Stop Detection";
     btn.setAttribute('style', 'background: green');
     cnv.removeAttribute('style', 'display: none');
+    effect.setAttribute('style', 'display: block');
   } else {
+    effect.removeAttribute('style', 'display: block');
+    effect.setAttribute('style', 'display: none');
     stopStreaming();
-    // renderPrediction(null);
     btn.textContent = "Start Detection";
     btn.removeAttribute('style', 'background: green');
     cnv.setAttribute('style', 'display: none');

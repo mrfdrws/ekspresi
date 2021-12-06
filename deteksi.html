@@ -70,10 +70,22 @@
                             </div>
                             <div class="TestToolContainer">
                                 <div class="TestTool">
-                                    <div class="Recorder"><button id="detection" class="RoundedButton -md -primary">Start Detection</button></div>
-                                    <h3 class="TestToolTitle">Expression</h3>
-                                    <!-- <p id="loading-model">Loading magics...</p> -->
-                                    <div class="Effects">
+                                    <div class="Recorder">
+                                        <button id="detection" class="RoundedButton -md -primary">Start Detection</button>
+                                    </div>
+                                    <h3 class="TestToolTitle">Models</h3>
+                                    <div class="CamTestSettingsDevices">
+                                        <div class="FormGroup">
+                                            <select class="FormSelect" id="scripts">
+                                                <option value="./models/bing/tfjs/model.json">BING Model</option>
+                                                <option value="./models/imed/tfjs/model.json">IMED Model</option>
+                                                <option value="./models/bingimed/tfjs/model.json">BingImed Model</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="Effects" id="effect" style="display: none;">
+                                        <h3 class="TestToolTitle">Grafik Ekspresi</h3>
                                         <ul class="list">
                                             <li class="EffectSelect"><label class="label">Angry</label><input class="range" type="range" min="0" max="100" id="angry" value="0" /></li>
                                             <li class="EffectSelect"><label class="label">Disgust</label><input class="range" type="range" min="0" max="100" id="disgust" value="0" /></li>

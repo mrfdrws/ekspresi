@@ -1,2 +1,2 @@
 npm install http-server
-http-server -p *port*
+http-server -p 3030
