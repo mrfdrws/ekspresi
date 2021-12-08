@@ -102,15 +102,15 @@ async function renderPrediction() {
       // let faceBoxStyle = "rgba(0, 255, 0, 0.25)";
       let faceBoxStyle = "rgba(255, 0, 0, 0.25)";
       let label = "Loading..";
-      let labels = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
+      let labels = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise'];
       if (predictions.length > 0) {
         document.getElementById('angry').value = predictions[0] * 100;
         document.getElementById('disgust').value = predictions[1] * 100;
         document.getElementById('fear').value = predictions[2] * 100;
         document.getElementById('happy').value = predictions[3] * 100;
-        document.getElementById('sad').value = predictions[4] * 100;
-        document.getElementById('surprise').value = predictions[5] * 100;
-        document.getElementById('neutral').value = predictions[6] * 100;
+        document.getElementById('neutral').value = predictions[4] * 100;
+        document.getElementById('sad').value = predictions[5] * 100;
+        document.getElementById('surprise').value = predictions[6] * 100;
         // console.log(predictions[0]);
         var indexOfMaxValue = predictions.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
         label = indexOfMaxValue;
