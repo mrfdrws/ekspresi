@@ -183,10 +183,12 @@ showStreaming();
 const btn = document.querySelector("button");
 const cnv = document.querySelector("canvas");
 const effect = document.getElementById('effect');
+const loading_page = document.getElementById('loading_page');
 
 btn.addEventListener("click", doDetection);
 async function doDetection() {
   if (btn.textContent === "Start Detection") {
+    loading_page.setAttribute('style', 'display: block');
     var sel = document.getElementById('scripts');
     var jenismodel = sel.options[sel.selectedIndex].value;
     datasetpathex = jenismodel;
@@ -202,6 +204,8 @@ async function doDetection() {
     btn.setAttribute('style', 'background: green');
     cnv.removeAttribute('style', 'display: none');
     effect.setAttribute('style', 'display: block');
+    loading_page.removeAttribute('style', 'display: block');
+    loading_page.setAttribute('style', 'display: none');
   } else {
     effect.removeAttribute('style', 'display: block');
     effect.setAttribute('style', 'display: none');
